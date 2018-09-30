@@ -20,26 +20,35 @@ public class Player : MonoBehaviour {
 
         float horizontalMov = Input.GetAxis("Horizontal");
         float verticalMov = Input.GetAxis("Vertical");
+        
         if (!jumped)
         {
+            Vector2 targetPos = Vector2.zero;
+            bool wantMove = false;
             if (horizontalMov != 0 )
             {
-                transform.position = new Vector2(
+                wantMove = true;
+                targetPos = new Vector2(
+                    
                     transform.position.x + (horizontalMov > 0 ? jumpDist : -jumpDist),
                     transform.position.y
                     );
-                jumped = true;
             }
             if (verticalMov != 0)
             {
-                
-                transform.position = new Vector2(
+                wantMove = true;
+                targetPos = new Vector2(
                     transform.position.x ,
                     transform.position.y + (verticalMov > 0 ? jumpDist : -jumpDist)
                     );
+            }
+            Collider2D hitCol = Physics2D.OverlapCircle(targetPos, 0.1f);
+
+            if (wantMove && hitCol == null)
+            {
+                transform.position = targetPos;
                 jumped = true;
             }
-
            
         }
         else
