@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+
+
+    public delegate void PlayerHandler();
+
+    public event PlayerHandler OnPlayerMoved;
+    public event PlayerHandler OnPlayerEscaped;
+
     public float jumpDist;
     bool jumped;
     Vector2 screen;
@@ -48,6 +55,10 @@ public class Player : MonoBehaviour {
             {
                 transform.position = targetPos;
                 jumped = true;
+                if(OnPlayerMoved != null)
+                {
+                    OnPlayerMoved();
+                }
             }
            
         }
@@ -67,6 +78,10 @@ public class Player : MonoBehaviour {
         }else if (transform.position.y > screen.y)
         {
             transform.position = startingPosition;
+            if(OnPlayerEscaped != null)
+            {
+                OnPlayerEscaped();
+            }
         }
         if (transform.position.x < -screen.x)
         {
