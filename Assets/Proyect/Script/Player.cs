@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 
     public event PlayerHandler OnPlayerMoved;
     public event PlayerHandler OnPlayerEscaped;
-
+    
     public float jumpDist;
     bool jumped;
     Vector2 screen;
@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
 	void Start () {
         
         screen.x = (Screen.width/100f)/2f / Camera.main.aspect;
-        screen.y = (Screen.height/100f)/2f / Camera.main.aspect; 
+        screen.y = (Screen.height/100f)/2f / Camera.main.aspect;
         startingPosition = transform.position;
     }
 	
@@ -46,15 +46,15 @@ public class Player : MonoBehaviour {
                 wantMove = true;
                 targetPos = new Vector2(
                     transform.position.x ,
-                    transform.position.y + (verticalMov > 0 ? jumpDist : -jumpDist)
-                    );
+                    transform.position.y + (verticalMov > 0 ? jumpDist : -jumpDist));
             }
             Collider2D hitCol = Physics2D.OverlapCircle(targetPos, 0.1f);
 
-            if (wantMove && hitCol == null)
+            if (wantMove && (hitCol == null || hitCol.GetComponent<EnemyController>() != null))
             {
                 transform.position = targetPos;
                 jumped = true;
+                GetComponent<AudioSource>().Play();
                 if(OnPlayerMoved != null)
                 {
                     OnPlayerMoved();
@@ -92,5 +92,11 @@ public class Player : MonoBehaviour {
             transform.position = new Vector2(transform.position.x - jumpDist, transform.position.y);
         }
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.GetComponent<EnemyController>() != null)
+            Destroy(gameObject);
     }
 }
